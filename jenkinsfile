@@ -41,7 +41,7 @@ pipeline {
         stage('push') {
             steps {
                 sh '''docker push imrezaulkrm/website:latest
-                docker image push $IMAGE_NAME
+                docker image push imrezaulkrm/website:$BUILD_NUMBER
                 docker image push $IMAGE_NAME1'''
             }
             }
