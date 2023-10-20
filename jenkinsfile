@@ -34,12 +34,15 @@ pipeline {
         }
 
         stage('Hello') {
-            steps {
-                sh '''echo "Rezaul@thenos" | docker login -u imrezaulkrm --password-stdin
+        steps {
+            script {
+                sh """echo "Rezaul@thenos" | docker login -u imrezaulkrm --password-stdin
                     docker push $IMAGE_NAME
                     docker push $IMAGE_NAME1
-                    docker push imrezaulkrm/website:latest'''
+                    docker push imrezaulkrm/website:latest"""
+                }
             }
         }
+
     }
 }
