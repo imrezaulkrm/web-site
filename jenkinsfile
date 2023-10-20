@@ -29,7 +29,7 @@ pipeline {
         stage('just latest tag') {
             steps {
                 sh '''docker build -t imrezaulkrm/website:latest .
-                    docker run -d -p 8030:80 website:latest'''
+                    docker run -d -p 8030:80 imrezaulkrm/website:latest'''
             }
         }
 
