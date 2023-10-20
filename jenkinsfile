@@ -33,10 +33,14 @@ pipeline {
             }
         }
 
-        stage('Hello') {
+        stage('login') {
             steps {
-                sh '''docker login -u "imrezaulkrm" -p "Rezaul@thenos"
-                docker push $IMAGE_NAME
+                sh '''docker login -u "imrezaulkrm" -p "Rezaul@thenos"'''
+            }
+            }
+        stage('push') {
+            steps {
+                sh '''docker push $IMAGE_NAME
                 docker push $IMAGE_NAME1
                 docker push imrezaulkrm/website:latest'''
             }
