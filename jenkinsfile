@@ -40,9 +40,9 @@ pipeline {
             }
         stage('push') {
             steps {
-                sh '''docker image push -a $IMAGE_NAME
-                docker image push $IMAGE_NAME1
-                docker image push imrezaulkrm/website:latest'''
+                sh '''docker push imrezaulkrm/website:latest
+                docker image push $IMAGE_NAME
+                docker image push $IMAGE_NAME1'''
             }
             }
 
