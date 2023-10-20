@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('source code pull from github') {
+            steps {
+                git branch: 'main', url: 'https://github.com/imrezaulkrm/web-site.git'
+            }
+        }
+
+        stage('build number tag') {
+            steps {
+                sh '''BUILD_NUMBER="${BUILD_NUMBER}"
+                    IMAGE_NAME="imrezaulkrm/website:$BUILD_NUMBER"
+                    docker build -t $IMAGE_NAME .
+                    docker run -d -p 8010:80 $IMAGE_NAME'''
+            }
+        }
+
+        stage('todays date tag') {
+            steps {
+                sh '''TODAYS_DATE=$(date "+%Y%m%d")
+                    IMAGE_NAME1="imrezaulkrm/website:$TODAYS_DATE"
+                    docker build -t $IMAGE_NAME1 .
+                    docker run -d -p 8020:80 $IMAGE_NAME1'''
+            }
+        }
+
+        stage('just latest tag') {
+            steps {
+                sh '''docker build -t imrezaulkrm/website:latest .
+                    docker run -d -p 8030:80 imrezaulkrm/website:latest'''
+            }
+        }
+
+        stage('Hello') {
+            steps {
+                sh '''docker login -u imrezaulkrm -p Rezaul@thenos
+                    docker push $IMAGE_NAME
+                    docker push $IMAGE_NAME1
+                    docker push imrezaulkrm/website:latest'''
+            }
+        }
+    }
+
+    post {
+        success {
+            // Stop and remove containers
+            sh 'docker stop $IMAGE_NAME $IMAGE_NAME1 imrezaulkrm/website:latest'
+            sh 'docker rm $IMAGE_NAME $IMAGE_NAME1 imrezaulkrm/website:latest'
+        }
+    }
+}
