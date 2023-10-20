@@ -41,7 +41,7 @@ pipeline {
         stage('push') {
             steps {
                 sh '''docker push imrezaulkrm/website:$BUILD_NUMBER
-                docker push imrezaulkrm/website:$TODAYS_DATE
+                docker push imrezaulkrm/website:$(date "+%Y%m%d")
                 docker push imrezaulkrm/website:latest'''
             }
             }
