@@ -1,9 +1,12 @@
 pipeline {
     agent any
     environment {
-        image1="$BUILD_NUMBER"
+        image1="$BUILD_NUMBER" 
+        //jenkins build
         image2=$(date "+%Y%m%d")
+        //jenkins build date
         image3 = "Latest"
+        //just latest
      }
 
     stages {
@@ -37,7 +40,7 @@ pipeline {
         stage('login+push+logout') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Dockerhub', passwordVariable: 'docker', usernameVariable: 'docker')]) {
-    // some block
+            // some block
             sh'echo ${PASSWORD} | docker login --username ${USER_NAME} --password-stdin'
             sh'docker push imrezaulkrm/website:${image1}'
             sh'docker push imrezaulkrm/website:${image2}'
@@ -46,8 +49,6 @@ pipeline {
                     }
                 }
             }
-
-
         }
 
 }
