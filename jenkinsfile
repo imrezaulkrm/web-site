@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    environment {
+        image1="$BUILD_NUMBER"
+        image2=$(date "+%Y%m%d")
+        image3 = "Latest"
+     }
 
     stages {
         stage('source code pull from github') {
@@ -10,41 +15,38 @@ pipeline {
 
         stage('build number tag') {
             steps {
-                sh '''BUILD_NUMBER="${BUILD_NUMBER}"
-                    IMAGE_NAME="imrezaulkrm/website:$BUILD_NUMBER"
-                    docker build -t $IMAGE_NAME .
-                    docker run -d -p 8010:80 $IMAGE_NAME'''
+                sh '''docker build -t imrezaulkrm/website:${image1} .
+                    docker run -d -p 8010:80 imrezaulkrm/website:${image1}'''
             }
         }
 
         stage('todays date tag') {
             steps {
-                sh '''TODAYS_DATE=$(date "+%Y%m%d")
-                    IMAGE_NAME1="imrezaulkrm/website:$TODAYS_DATE"
-                    docker build -t $IMAGE_NAME1 .
-                    docker run -d -p 8020:80 $IMAGE_NAME1'''
+                sh '''docker build -t imrezaulkrm/website:${image2} .
+                    docker run -d -p 8020:80 imrezaulkrm/website:${image2}'''
             }
         }
 
         stage('just latest tag') {
             steps {
-                sh '''docker build -t imrezaulkrm/website:latest .
-                    docker run -d -p 8030:80 imrezaulkrm/website:latest'''
+                sh '''docker build -t imrezaulkrm/website:${image3} .
+                    docker run -d -p 8030:80 imrezaulkrm/website:${image3}'''
             }
         }
 
-        stage('login') {
+        stage('login+push+logout') {
             steps {
-                sh '''docker login -u "imrezaulkrm" -p "Rezaul@thenos"'''
+                withCredentials([usernamePassword(credentialsId: 'Dockerhub', passwordVariable: 'docker', usernameVariable: 'docker')]) {
+    // some block
+            sh'echo ${PASSWORD} | docker login --username ${USER_NAME} --password-stdin'
+            sh'docker push imrezaulkrm/website:${image1}'
+            sh'docker push imrezaulkrm/website:${image2}'
+            sh'docker push imrezaulkrm/website:${image3}'
+            sh'docker logout'
+                    }
+                }
             }
-            }
-        stage('push') {
-            steps {
-                sh '''docker push imrezaulkrm/website:$BUILD_NUMBER
-                docker push imrezaulkrm/website:$(date "+%Y%m%d")
-                docker push imrezaulkrm/website:latest'''
-            }
-            }
+
 
         }
 
